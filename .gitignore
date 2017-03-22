@@ -1,0 +1,9 @@
+node_modules
+.DS_Store
+*.json
+*.mp4
+*.dump
+!package.json
+
+client_secret.json
+client_secret_samradicalelie.json

@@ -1,0 +1,33 @@
+{
+  "name": "watch-youtube-upload",
+  "description": "",
+  "homepage": "https://github.com/samradical/watch-youtube-upload/",
+  "author": "Sam Elie <samradelie@gmail.com>",
+  "version": "0.5.0",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samradical/watch-youtube-upload.git",
+    "web": "https://github.com/samradical/watch-youtube-upload/"
+  },
+  "main": "index.new.js",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "exec-queue": "0.0.2",
+    "node-watch": "^0.5.2"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/samradical/watch-youtube-upload/issues"
+  },
+  "engines": {
+    "node": ">=5.0.0"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/samradical/watch-youtube-upload/raw/master/LICENSE"
+    }
+  ],
+  "devDependencies": {}
+}
