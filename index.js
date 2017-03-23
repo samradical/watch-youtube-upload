@@ -12,9 +12,10 @@ const SUPPORTED_FORMATS = [".mov", ".mpeg4", ".mp4", ".avi", ".wmv", ".mpegps", 
 
 function uploadVideo(filePath) {
   return new Q((yes, no) => {
-    const { PRIVACY, CLIENT_SECRETS, DELETE_AFTER_UPLOAD } = process.env;
+    const { PRIVACY, CLIENT_SECRETS, CLIENT_CREDENTIALS, DELETE_AFTER_UPLOAD } = process.env;
+    const credentials = CLIENT_CREDENTIALS ? `--credentials-file=${CLIENT_CREDENTIALS}` : ""
     const { name, base } = path.parse(filePath)
-    const cmd = `youtube-upload --title="${name}" --privacy=${PRIVACY} --credentials-file=credentials.json --client-secrets=${CLIENT_SECRETS} "${filePath}"`
+    const cmd = `youtube-upload --title="${name}" --privacy=${PRIVACY} ${credentials} --client-secrets=${CLIENT_SECRETS} "${filePath}"`
     console.log(cmd);
     exec(cmd, function(err, stdout, stderr) {
       console.log(`youtube id ${stdout}`);
