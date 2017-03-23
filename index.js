@@ -63,11 +63,13 @@ watch(process.env.DOWNLOAD_DIR, { recursive: true }, function(evt, name) {
 
       if (SUPPORTED_FORMATS.indexOf(ext) > -1) {
         if (fs.lstatSync(name).isDirectory()) {
-          const files = readDir.readSync(name, SUPPORTED_FORMATS.map(p => (`**${p}`)), readDir.ABSOLUTE_PATHS);
-          Q.map(files,p=>{
-            return _uploadVideo(p)
-          },{concurrency:1})
-          .finally()
+          setTimeout(()=>{
+            const files = readDir.readSync(name, SUPPORTED_FORMATS.map(p => (`**${p}`)), readDir.ABSOLUTE_PATHS);
+            Q.map(files,p=>{
+              return _uploadVideo(p)
+            },{concurrency:1})
+            .finally()
+          },1000)
         } else {
           _uploadVideo(name)
         }
