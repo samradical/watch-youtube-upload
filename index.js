@@ -10,6 +10,8 @@ console.log(process.env);
 
 const SUPPORTED_FORMATS = [".mov", ".mpeg4", ".mp4", ".avi", ".wmv", ".mpegps", ".flv", ".3gpp", ".webm", ".mkv"]
 
+const IGNORE_STRINGS = ["UNPACK"]
+
 function uploadVideo(filePath) {
   return new Q((yes, no) => {
     const { PRIVACY, CLIENT_SECRETS, CLIENT_CREDENTIALS, DELETE_AFTER_UPLOAD } = process.env;
@@ -67,7 +69,7 @@ watch(process.env.DOWNLOAD_DIR, { recursive: true }, function(evt, name) {
 
       }
 
-      if (SUPPORTED_FORMATS.indexOf(ext) > -1) {
+      if (SUPPORTED_FORMATS.indexOf(ext) > -1 && IGNORE_STRINGS.filter(ingor=>(name.indexOf(ingor) > -1)).length === 0) {
         if (fs.lstatSync(name).isDirectory()) {
           setTimeout(()=>{
             const files = readDir.readSync(name, SUPPORTED_FORMATS.map(p => (`**${p}`)), readDir.ABSOLUTE_PATHS);
