@@ -33,8 +33,10 @@ watch(process.env.DOWNLOAD_DIR, { recursive: true }, function(evt, name) {
     case 'update':
       const ext = path.parse(name).ext;
       const containerFolder = fs.lstatSync(name).isDirectory() ? name : null
-      if (SUPPORTED_FORMATS.indexOf(ext) > -1 && !fs.lstatSync(name).isDirectory()) {
-        console.log(name);
+      console.log(`Got ${name}`);
+
+      if (SUPPORTED_FORMATS.indexOf(ext) > -1) {
+        //&& !fs.lstatSync(name).isDirectory()
         uploadVideo(name)
           .then(filePath => {
             const {dir} = path.parse(filePath)
