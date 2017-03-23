@@ -5,6 +5,8 @@ var readDir = require('readdir')
 var watch = require('node-watch');
 const exec = require('child_process').exec
 
+console.log(process.env);
+
 const SUPPORTED_FORMATS = [".mov", ".mpeg4", ".mp4", ".avi", ".wmv", ".mpegps", ".flv", ".3gpp", ".webm", ".mkv"]
 
 function uploadVideo(filePath) {
