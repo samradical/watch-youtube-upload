@@ -14,7 +14,8 @@
   "dependencies": {
     "dotenv": "^4.0.0",
     "exec-queue": "0.0.2",
-    "node-watch": "^0.5.2"
+    "node-watch": "^0.5.2",
+    "readdir": "0.0.13"
   },
   "keywords": [],
   "bugs": {
