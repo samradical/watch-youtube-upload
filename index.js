@@ -50,8 +50,9 @@ watch(process.env.DOWNLOAD_DIR, { recursive: true }, function(evt, name) {
                 console.log(`Deleted ${fileToDelete}`);
                 if (containerFolder) {
                   try{
-                    fs.rmdir(containerFolder)
-                    console.log(`Deleted directory${fileToDelete}`);
+                    fs.rmdir(containerFolder, function(err,data){
+                      console.log(`Deleted directory${fileToDelete}`);
+                    })
                   }
                   catch(e){
 
