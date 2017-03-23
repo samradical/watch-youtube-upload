@@ -12,6 +12,7 @@
   },
   "main": "index.new.js",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "dotenv": "^4.0.0",
     "exec-queue": "0.0.2",
     "node-watch": "^0.5.2",
