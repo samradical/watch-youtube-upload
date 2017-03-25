@@ -98,7 +98,7 @@ watch(process.env.DOWNLOAD_DIR, { recursive: true }, function(evt, name) {
       if (to) {
         clearTimeout(to)
       }
-      to = setTimeout(processTrigger, 3000, name)
+      to = setTimeout(processTrigger, 10000, name)
       break;
   }
 });
