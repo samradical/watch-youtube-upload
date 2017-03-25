@@ -31,58 +31,65 @@ function uploadVideo(filePath) {
   })
 }
 
-watch(process.env.DOWNLOAD_DIR, { recursive: true }, function(evt, name) {
-  switch (evt) {
-    case 'created':
-    case 'update':
-      const ext = path.parse(name).ext;
-      const containerFolder = fs.lstatSync(name).isDirectory() ? name : null
 
-      console.log(`Got ${name}`);
+function processTrigger(name) {
+  const ext = path.parse(name).ext;
+  const containerFolder = fs.lstatSync(name).isDirectory() ? name : null
 
-      function _uploadVideo(name) {
+  console.log(`Got ${name}`);
 
-        return uploadVideo(name)
-          .then(filePath => {
-            const { dir } = path.parse(filePath)
-            const { DELETE_AFTER_UPLOAD } = process.env;
-            if (Boolean(DELETE_AFTER_UPLOAD)) {
-              const fileToDelete = containerFolder || filePath
-              exec(`rm -rf "${fileToDelete}"`, function(err, stdout, stderr) {
-                console.log(`Deleted ${fileToDelete}`);
-                if (containerFolder) {
-                  try{
-                    fs.rmdir(containerFolder, function(err,data){
-                      console.log(`Deleted directory${fileToDelete}`);
-                    })
-                  }
-                  catch(e){
+  function _uploadVideo(name) {
+    return uploadVideo(name)
+      .then(filePath => {
+        const { dir } = path.parse(filePath)
+        const { DELETE_AFTER_UPLOAD } = process.env;
+        if (Boolean(DELETE_AFTER_UPLOAD)) {
+          const fileToDelete = containerFolder || filePath
+          exec(`rm -rf "${fileToDelete}"`, function(err, stdout, stderr) {
+            console.log(`Deleted ${fileToDelete}`);
+            if (containerFolder) {
+              try {
+                fs.rmdir(containerFolder, function(err, data) {
+                  console.log(`Deleted directory${fileToDelete}`);
+                })
+              } catch (e) {
 
-                  }
-                }
-              })
+              }
             }
           })
-          .catch(err => {
-
-          })
-
-      }
-
-      if (SUPPORTED_FORMATS.indexOf(ext) > -1 && IGNORE_STRINGS.filter(ingor=>(name.indexOf(ingor) > -1)).length === 0) {
-        if (fs.lstatSync(name).isDirectory()) {
-          setTimeout(()=>{
-            const files = readDir.readSync(name, SUPPORTED_FORMATS.map(p => (`**${p}`)), readDir.ABSOLUTE_PATHS);
-            Q.map(files,p=>{
-              return _uploadVideo(p)
-            },{concurrency:1})
-            .finally()
-          },1000)
-        } else {
-          _uploadVideo(name)
         }
-      }
+      })
+      .catch(err => {
 
+      })
+  }
+
+  if (SUPPORTED_FORMATS.indexOf(ext) > -1 && IGNORE_STRINGS.filter(ingor => (name.indexOf(ingor) > -1)).length === 0) {
+    if (fs.lstatSync(name).isDirectory()) {
+      setTimeout(() => {
+        const files = readDir.readSync(name, SUPPORTED_FORMATS.map(p => (`**${p}`)), readDir.ABSOLUTE_PATHS);
+        Q.map(files, p => {
+            return _uploadVideo(p)
+          }, { concurrency: 1 })
+          .finally()
+      }, 1000)
+    } else {
+      _uploadVideo(name)
+    }
+  }
+
+}
+
+let to;
+
+watch(process.env.DOWNLOAD_DIR, { recursive: true }, function(evt, name) {
+  switch (evt) {
+    case 'update':
+      if (to) {
+        clearTimeout(to)
+      }
+      console.log(name);
+      to = setTimeout(processTrigger, 3000, name)
       break;
   }
 });
