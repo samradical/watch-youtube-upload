@@ -2,6 +2,7 @@ require('dotenv').config()
 var path = require('path')
 var fs = require('fs')
 var Q = require('bluebird')
+var SABNZB = require('./sabnzb')
 var readDir = require('readdir')
 var watch = require('node-watch');
 const exec = require('child_process').exec
@@ -24,6 +25,7 @@ function uploadVideo(filePath) {
       //a video id
       if (stdout.indexOf(" ") < 0) {
         yes(filePath)
+        SABNZB.next()
       } else {
         no(filePath)
       }
