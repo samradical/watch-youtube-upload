@@ -8,6 +8,9 @@ const SABNZB = (()=>{
 
   function next(argument) {
     exec(`sabnzb add --nzb ${avengers[INDEX]}`)
+    if(INDEX < avengers.length -1){
+      INDEX++
+    }
   }
 
   return {
