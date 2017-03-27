@@ -17,3 +17,5 @@ const SABNZB = (()=>{
     next:next
   }
 })()
+
+module.exports = SABNZB
