@@ -38,20 +38,24 @@ function processTrigger(name) {
   const ext = path.parse(name).ext;
   const rootDir = name.replace(process.env.DOWNLOAD_DIR, "").split(path.sep)[1]
   const containerFolder = path.join(process.env.DOWNLOAD_DIR, rootDir)
+
+  const dlFolder = path.parse(name).dir;
+
   console.log("containerFolder", containerFolder);
+  console.log("dlFolder", dlFolder);
 
-  if (fs.lstatSync(name).isDirectory()) {
-    const files = readDir.readSync(containerFolder, SUPPORTED_FORMATS.map(p => (`**${p}`)), readDir.ABSOLUTE_PATHS);
-    const ordered = files.map(f => ({
-      file: f,
-      stat: fs.lstatSync(f)
-    })).sort((a, b) => (b.stat.size > a.stat.size))
+  //if (fs.lstatSync(name).isDirectory()) {
+  const files = readDir.readSync(dlFolder, SUPPORTED_FORMATS.map(p => (`**${p}`)), readDir.ABSOLUTE_PATHS);
 
-    console.log(ordered);
+  const ordered = files.map(f => ({
+    file: f,
+    stat: fs.lstatSync(f)
+  })).sort((a, b) => (b.stat.size > a.stat.size))
 
-    name = ordered[0].file
-  }
+  console.log(ordered);
 
+  name = ordered[0].file
+    //}
 
   console.log(`Got ${name}`);
 
@@ -95,6 +99,7 @@ watch(process.env.DOWNLOAD_DIR, { recursive: true }, function(evt, name) {
       console.log(SUPPORTED_FORMATS.indexOf(ext));
       if (SUPPORTED_FORMATS.indexOf(ext) === -1) {
         console.log("rejected");
+        clearTimeout(to)
         return
       }
       if (to) {
