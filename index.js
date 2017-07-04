@@ -33,8 +33,13 @@ function uploadVideo(filePath) {
   })
 }
 
+let processing = {
+
+}
 
 function processTrigger(name) {
+
+
   const ext = path.parse(name).ext;
   const rootDir = name.replace(process.env.DOWNLOAD_DIR, "").split(path.sep)[1]
   const containerFolder = path.join(process.env.DOWNLOAD_DIR, rootDir)
@@ -43,6 +48,9 @@ function processTrigger(name) {
 
   console.log("containerFolder", containerFolder);
   console.log("dlFolder", dlFolder);
+
+  if(processing[dlFolder]) return
+  processing[dlFolder] = true
 
   //if (fs.lstatSync(name).isDirectory()) {
   const files = readDir.readSync(dlFolder, SUPPORTED_FORMATS.map(p => (`**${p}`)), readDir.ABSOLUTE_PATHS);
@@ -53,9 +61,6 @@ function processTrigger(name) {
   })).sort((a, b) => (b.stat.size > a.stat.size))
 
   console.log(ordered);
-
-  name = ordered[0].file
-    //}
 
   console.log(`Got ${name}`);
 
@@ -68,9 +73,10 @@ function processTrigger(name) {
           const fileToDelete = containerFolder || filePath
           exec(`rm -rf "${fileToDelete}"`, function(err, stdout, stderr) {
             console.log(`Deleted ${fileToDelete}`);
-            if (containerFolder) {
+            delete processing[dlFolder]
+            if (dlFolder) {
               try {
-                fs.rmdir(containerFolder, function(err, data) {
+                fs.rmdir(dlFolder, function(err, data) {
                   console.log(`Deleted directory${fileToDelete}`);
                 })
               } catch (e) {
@@ -85,27 +91,34 @@ function processTrigger(name) {
       })
   }
 
-  _uploadVideo(name)
+  if(ordered.length){
+    name = ordered[0].file
+    _uploadVideo(name)
+  }
 
 }
 
-let to;
+let timeouts = {
+
+}
+
 
 watch(process.env.DOWNLOAD_DIR, { recursive: true }, function(evt, name) {
   switch (evt) {
     case 'update':
       const { ext, base } = path.parse(name);
-      console.log(ext);
-      console.log(SUPPORTED_FORMATS.indexOf(ext));
+      if (timeouts[base]) {
+        clearTimeout(timeouts[base])
+      }
       if (SUPPORTED_FORMATS.indexOf(ext) === -1) {
         console.log("rejected");
-        clearTimeout(to)
         return
       }
-      if (to) {
-        clearTimeout(to)
+      console.log(name);
+      if(name.indexOf('complete') < 0){
+        return
       }
-      to = setTimeout(processTrigger, 10000, name)
+      timeouts[base] = setTimeout(processTrigger, 10000, name)
       break;
   }
 });
